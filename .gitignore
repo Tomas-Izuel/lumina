@@ -1,0 +1,6 @@
+Propi-doc/
+node_modules/
+.env
+*.zip
+__pycache__/
+.venv/

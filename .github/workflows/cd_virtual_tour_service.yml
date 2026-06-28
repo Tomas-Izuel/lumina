@@ -1,0 +1,125 @@
+name: CD — virtual-tour-service
+
+# Disparo: push a releases que afecte archivos del servicio
+# Mirrors el patrón cd_api_access.yml del monorepo Propital.
+on:
+  push:
+    branches:
+      - releases
+    paths:
+      - "virtual-tour-service/**"
+      - ".github/workflows/cd_virtual_tour_service.yml"
+
+env:
+  AWS_REGION: us-west-2
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  # -----------------------------------------------------------------------
+  # 1. Tests
+  # -----------------------------------------------------------------------
+  test:
+    name: pytest
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        working-directory: virtual-tour-service
+        run: pip install -r requirements-dev.txt
+
+      - name: Run tests
+        working-directory: virtual-tour-service
+        env:
+          SUPABASE_URL: https://test.supabase.co
+          SUPABASE_SERVICE_KEY: test-key
+          ADMIN_API_KEY: test-admin-key
+        run: pytest tests/ -v --tb=short
+
+  # -----------------------------------------------------------------------
+  # 2. Build + Deploy (solo si tests pasan)
+  # -----------------------------------------------------------------------
+  deploy:
+    name: Build & Deploy Lambdas
+    runs-on: ubuntu-latest
+    needs: test
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.VTS_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.VTS_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install runtime dependencies
+        working-directory: virtual-tour-service
+        run: |
+          pip install -r requirements.txt --target ./package
+
+      - name: Build ZIP artifact
+        working-directory: virtual-tour-service
+        run: |
+          # Copiar el código fuente al directorio de packaging
+          cp -r src main.py worker.py poller.py webhook.py ./package/
+          cd package
+          zip -r ../lambda.zip . -x "*.pyc" -x "__pycache__/*"
+          cd ..
+          echo "ZIP size: $(du -sh lambda.zip)"
+
+      - name: Deploy virtual-tour-api
+        working-directory: virtual-tour-service
+        run: |
+          aws lambda update-function-code \
+            --function-name virtual-tour-api \
+            --zip-file fileb://lambda.zip \
+            --region ${{ env.AWS_REGION }}
+
+      - name: Deploy virtual-tour-worker
+        working-directory: virtual-tour-service
+        run: |
+          aws lambda update-function-code \
+            --function-name virtual-tour-worker \
+            --zip-file fileb://lambda.zip \
+            --region ${{ env.AWS_REGION }}
+
+      - name: Deploy virtual-tour-poller
+        working-directory: virtual-tour-service
+        run: |
+          aws lambda update-function-code \
+            --function-name virtual-tour-poller \
+            --zip-file fileb://lambda.zip \
+            --region ${{ env.AWS_REGION }}
+
+      - name: Deploy virtual-tour-webhook
+        working-directory: virtual-tour-service
+        run: |
+          aws lambda update-function-code \
+            --function-name virtual-tour-webhook \
+            --zip-file fileb://lambda.zip \
+            --region ${{ env.AWS_REGION }}
+
+      - name: Verify deployments
+        run: |
+          for fn in virtual-tour-api virtual-tour-worker virtual-tour-poller virtual-tour-webhook; do
+            echo "=== $fn ==="
+            aws lambda get-function-configuration \
+              --function-name "$fn" \
+              --region ${{ env.AWS_REGION }} \
+              --query '{Handler: Handler, Runtime: Runtime, LastModified: LastModified}' \
+              --output table
+          done
