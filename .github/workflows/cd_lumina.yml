@@ -1,4 +1,4 @@
-name: CD — virtual-tour-service
+name: CD — lumina
 
 # Disparo: push a releases que afecte archivos del servicio
 # Mirrors el patrón cd_api_access.yml del monorepo Propital.
@@ -7,8 +7,8 @@ on:
     branches:
       - releases
     paths:
-      - "virtual-tour-service/**"
-      - ".github/workflows/cd_virtual_tour_service.yml"
+      - "lumina/**"
+      - ".github/workflows/cd_lumina.yml"
 
 env:
   AWS_REGION: us-west-2
@@ -31,11 +31,11 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install dependencies
-        working-directory: virtual-tour-service
+        working-directory: lumina
         run: pip install -r requirements-dev.txt
 
       - name: Run tests
-        working-directory: virtual-tour-service
+        working-directory: lumina
         env:
           SUPABASE_URL: https://test.supabase.co
           SUPABASE_SERVICE_KEY: test-key
@@ -57,8 +57,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.VTS_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.VTS_AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.LUMINA_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.LUMINA_AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Set up Python
@@ -67,12 +67,12 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install runtime dependencies
-        working-directory: virtual-tour-service
+        working-directory: lumina
         run: |
           pip install -r requirements.txt --target ./package
 
       - name: Build ZIP artifact
-        working-directory: virtual-tour-service
+        working-directory: lumina
         run: |
           # Copiar el código fuente al directorio de packaging
           cp -r src main.py worker.py poller.py webhook.py ./package/
@@ -81,41 +81,41 @@ jobs:
           cd ..
           echo "ZIP size: $(du -sh lambda.zip)"
 
-      - name: Deploy virtual-tour-api
-        working-directory: virtual-tour-service
+      - name: Deploy lumina-api
+        working-directory: lumina
         run: |
           aws lambda update-function-code \
-            --function-name virtual-tour-api \
+            --function-name lumina-api \
             --zip-file fileb://lambda.zip \
             --region ${{ env.AWS_REGION }}
 
-      - name: Deploy virtual-tour-worker
-        working-directory: virtual-tour-service
+      - name: Deploy lumina-worker
+        working-directory: lumina
         run: |
           aws lambda update-function-code \
-            --function-name virtual-tour-worker \
+            --function-name lumina-worker \
             --zip-file fileb://lambda.zip \
             --region ${{ env.AWS_REGION }}
 
-      - name: Deploy virtual-tour-poller
-        working-directory: virtual-tour-service
+      - name: Deploy lumina-poller
+        working-directory: lumina
         run: |
           aws lambda update-function-code \
-            --function-name virtual-tour-poller \
+            --function-name lumina-poller \
             --zip-file fileb://lambda.zip \
             --region ${{ env.AWS_REGION }}
 
-      - name: Deploy virtual-tour-webhook
-        working-directory: virtual-tour-service
+      - name: Deploy lumina-webhook
+        working-directory: lumina
         run: |
           aws lambda update-function-code \
-            --function-name virtual-tour-webhook \
+            --function-name lumina-webhook \
             --zip-file fileb://lambda.zip \
             --region ${{ env.AWS_REGION }}
 
       - name: Verify deployments
         run: |
-          for fn in virtual-tour-api virtual-tour-worker virtual-tour-poller virtual-tour-webhook; do
+          for fn in lumina-api lumina-worker lumina-poller lumina-webhook; do
             echo "=== $fn ==="
             aws lambda get-function-configuration \
               --function-name "$fn" \

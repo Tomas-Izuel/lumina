@@ -1,6 +1,6 @@
 -- =============================================================================
 -- Migration 001 — Tenants and tenant API key pairs
--- Service: virtual-tour-service
+-- Service: lumina
 -- Date: 2026-06-28
 -- AC covered: prerequisite for all AC (auth backbone: AC-1, AC-11)
 --
@@ -68,7 +68,7 @@ COMMENT ON TABLE tenant_api_keys IS
     'Designed for rotation: a tenant can have multiple active key pairs.';
 
 COMMENT ON COLUMN tenant_api_keys.key_id IS
-    'Public identifier, readable prefix. Example: "vts_propital_abc123". '
+    'Public identifier, readable prefix. Example: "lumina_propital_abc123". '
     'Used to look up the row before bcrypt verification.';
 
 COMMENT ON COLUMN tenant_api_keys.key_hash IS

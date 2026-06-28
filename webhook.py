@@ -127,8 +127,8 @@ def _dispatch_webhook(
 
     headers = {
         "Content-Type": "application/json",
-        "X-VTS-Signature": signature,
-        "X-VTS-Tour-Id": tour_id,
+        "X-LUMINA-Signature": signature,
+        "X-LUMINA-Tour-Id": tour_id,
     }
 
     # 4. HTTP POST con timeout 10s

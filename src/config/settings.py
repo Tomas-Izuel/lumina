@@ -18,8 +18,8 @@ class Settings(BaseSettings):
 
     # AWS / S3
     aws_region: str = "us-west-2"
-    s3_upload_bucket: str = "virtual-tour-inputs"
-    s3_output_bucket: str = "virtual-tour-outputs"
+    s3_upload_bucket: str = "lumina-inputs"
+    s3_output_bucket: str = "lumina-outputs"
 
     # SQS
     tour_jobs_queue_url: str = ""

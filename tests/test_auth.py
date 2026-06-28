@@ -51,7 +51,7 @@ def test_invalid_api_key_returns_403(client_with_mock_auth):
 
         response = client_with_mock_auth.post(
             "/tours",
-            headers={"X-API-Key": "vts_nonexistent:wrongsecret"},
+            headers={"X-API-Key": "lumina_nonexistent:wrongsecret"},
             json={
                 "idempotency_key": "test-key",
                 "image_s3_keys": ["a", "b", "c", "d", "e"],
@@ -91,7 +91,7 @@ class TestLastUsedAtThrottle:
             supabase=mock_supa,
             row_id="key-id-123",
             current_last_used_at=None,
-            key_id="vts_test",
+            key_id="lumina_test",
         )
 
         mock_supa.table.return_value.update.assert_called_once()
@@ -112,7 +112,7 @@ class TestLastUsedAtThrottle:
                 supabase=mock_supa,
                 row_id="key-id-123",
                 current_last_used_at=old_ts,
-                key_id="vts_test",
+                key_id="lumina_test",
             )
 
         mock_supa.table.return_value.update.assert_called_once()
@@ -133,7 +133,7 @@ class TestLastUsedAtThrottle:
                 supabase=mock_supa,
                 row_id="key-id-123",
                 current_last_used_at=recent_ts,
-                key_id="vts_test",
+                key_id="lumina_test",
             )
 
         mock_supa.table.return_value.update.assert_not_called()
@@ -151,7 +151,7 @@ class TestLastUsedAtThrottle:
                 supabase=mock_supa,
                 row_id="key-id-123",
                 current_last_used_at="not-a-valid-datetime",
-                key_id="vts_test",
+                key_id="lumina_test",
             )
 
         mock_supa.table.return_value.update.assert_called_once()
@@ -170,5 +170,5 @@ class TestLastUsedAtThrottle:
             supabase=mock_supa,
             row_id="key-id-123",
             current_last_used_at=None,  # → intentará escribir
-            key_id="vts_test",
+            key_id="lumina_test",
         )

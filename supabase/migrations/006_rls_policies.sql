@@ -1,6 +1,6 @@
 -- =============================================================================
 -- Migration 006 — Row Level Security (RLS) policies
--- Service: virtual-tour-service
+-- Service: lumina
 -- Date: 2026-06-28
 -- AC covered: AC-11 (strict multi-tenant isolation)
 --

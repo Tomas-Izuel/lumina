@@ -1,6 +1,6 @@
 -- =============================================================================
 -- Migration 004 — Webhooks and tenant quotas
--- Service: virtual-tour-service
+-- Service: lumina
 -- Date: 2026-06-28
 -- AC covered: AC-10 (reliable webhook delivery with retries and audit log),
 --             AC-13 (webhook_deliveries for observability),
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS tenant_webhooks (
 COMMENT ON TABLE tenant_webhooks IS
     'One webhook endpoint per tenant (v1). '
     'The webhook dispatcher Lambda signs each delivery with HMAC-SHA256 using webhook_secret. '
-    'Header sent: X-VTS-Signature: sha256=<hex_digest>. '
+    'Header sent: X-LUMINA-Signature: sha256=<hex_digest>. '
     'UNIQUE(tenant_id): in v2 this constraint can be relaxed to support multiple endpoints.';
 
 COMMENT ON COLUMN tenant_webhooks.webhook_secret IS

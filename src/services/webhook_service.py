@@ -61,7 +61,7 @@ class WebhookService:
     def compute_signature(self, payload_body: str, secret: str) -> str:
         """
         Genera la firma HMAC-SHA256.
-        Header que el dispatcher adjuntará: X-VTS-Signature: sha256=<hex>
+        Header que el dispatcher adjuntará: X-LUMINA-Signature: sha256=<hex>
         """
         mac = hmac.new(
             secret.encode("utf-8"),

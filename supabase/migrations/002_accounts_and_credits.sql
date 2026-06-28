@@ -1,6 +1,6 @@
 -- =============================================================================
 -- Migration 002 — Accounts and credit system
--- Service: virtual-tour-service
+-- Service: lumina
 -- Date: 2026-06-28
 -- AC covered: AC-4 (credit check before tour), AC-5 (atomic credit debit),
 --             AC-6 (no double debit), AC-8 (on-demand nullable account),

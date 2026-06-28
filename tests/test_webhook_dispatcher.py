@@ -17,7 +17,7 @@ import pytest
 
 TENANT_ID = str(uuid.uuid4())
 TOUR_ID = str(uuid.uuid4())
-WEBHOOK_URL = "https://app.propital.com/webhooks/virtual-tour"
+WEBHOOK_URL = "https://app.propital.com/webhooks/lumina"
 WEBHOOK_SECRET = "super-secret-for-hmac-tests"
 
 

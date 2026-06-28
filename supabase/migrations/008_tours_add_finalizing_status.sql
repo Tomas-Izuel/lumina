@@ -1,6 +1,6 @@
 -- =============================================================================
 -- Migration 008 — Add 'finalizing' intermediate status to tours
--- Service: virtual-tour-service
+-- Service: lumina
 -- Date: 2026-06-28
 -- AC covered: AC-5, AC-6 (atomic claim prevents duplicate processing)
 --

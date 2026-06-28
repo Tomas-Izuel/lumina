@@ -1,6 +1,6 @@
-# Supabase — virtual-tour-service
+# Supabase — lumina
 
-Database for the `virtual-tour-service`. A dedicated Supabase project, isolated from the
+Database for the `lumina`. A dedicated Supabase project, isolated from the
 Propital PROD instance (`aitogfkoufbdriomrbxe`).
 
 ## Project details (to fill in after provisioning)
@@ -8,7 +8,7 @@ Propital PROD instance (`aitogfkoufbdriomrbxe`).
 | Field | Value |
 |-------|-------|
 | Organization | `yysgimjexxlzgsqczwyk` |
-| Project name | `virtual-tour-service` |
+| Project name | `lumina` |
 | Region | `us-west-2` |
 | Project ref | _set after creation_ |
 | Extensions | `pgcrypto`, `uuid-ossp` |
@@ -32,7 +32,7 @@ supabase/migrations/
 
 1. Go to https://supabase.com/dashboard/organizations/yysgimjexxlzgsqczwyk
 2. Click **New project**
-3. Name: `virtual-tour-service` | Region: `us-west-2` | DB password: generate a strong one
+3. Name: `lumina` | Region: `us-west-2` | DB password: generate a strong one
 4. Wait for provisioning (~2 min)
 
 ### Step 2 — Get the project credentials

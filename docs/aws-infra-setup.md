@@ -1,4 +1,4 @@
-# AWS Infrastructure Setup — virtual-tour-service
+# AWS Infrastructure Setup — lumina
 
 > Recursos a crear manualmente ANTES del primer deploy.
 > NO se crean automáticamente — requieren `aws sso login` con permisos suficientes.
@@ -33,23 +33,23 @@ aws pricing get-products \
 
 ## 1. S3 Buckets (us-west-2)
 
-### virtual-tour-inputs (imágenes de los tenants)
+### lumina-inputs (imágenes de los tenants)
 
 ```bash
 aws s3api create-bucket \
-  --bucket virtual-tour-inputs \
+  --bucket lumina-inputs \
   --region us-west-2 \
   --create-bucket-configuration LocationConstraint=us-west-2
 
 # Bloquear acceso público
 aws s3api put-public-access-block \
-  --bucket virtual-tour-inputs \
+  --bucket lumina-inputs \
   --public-access-block-configuration \
     BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true
 
 # Lifecycle: eliminar uploads/ después de 2 días
 aws s3api put-bucket-lifecycle-configuration \
-  --bucket virtual-tour-inputs \
+  --bucket lumina-inputs \
   --lifecycle-configuration '{
     "Rules": [{
       "ID": "delete-uploads-2d",
@@ -61,7 +61,7 @@ aws s3api put-bucket-lifecycle-configuration \
 
 # CORS para presigned PUT desde browser (si el tenant sube desde frontend)
 aws s3api put-bucket-cors \
-  --bucket virtual-tour-inputs \
+  --bucket lumina-inputs \
   --cors-configuration '{
     "CORSRules": [{
       "AllowedHeaders": ["*"],
@@ -73,22 +73,22 @@ aws s3api put-bucket-cors \
   }'
 ```
 
-### virtual-tour-outputs (clips intermedios + video final)
+### lumina-outputs (clips intermedios + video final)
 
 ```bash
 aws s3api create-bucket \
-  --bucket virtual-tour-outputs \
+  --bucket lumina-outputs \
   --region us-west-2 \
   --create-bucket-configuration LocationConstraint=us-west-2
 
 aws s3api put-public-access-block \
-  --bucket virtual-tour-outputs \
+  --bucket lumina-outputs \
   --public-access-block-configuration \
     BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true
 
 # Lifecycle: eliminar tours/ después de 30 días (retención de video, Q4)
 aws s3api put-bucket-lifecycle-configuration \
-  --bucket virtual-tour-outputs \
+  --bucket lumina-outputs \
   --lifecycle-configuration '{
     "Rules": [{
       "ID": "delete-tours-30d",
@@ -103,41 +103,41 @@ aws s3api put-bucket-lifecycle-configuration \
 
 ## 2. SQS Queues (us-west-2)
 
-### virtual-tour-jobs.fifo (FIFO — jobs de generación)
+### lumina-jobs.fifo (FIFO — jobs de generación)
 
 ```bash
 aws sqs create-queue \
-  --queue-name virtual-tour-jobs-dlq.fifo \
+  --queue-name lumina-jobs-dlq.fifo \
   --attributes FifoQueue=true,ContentBasedDeduplication=false \
   --region us-west-2
 
 DLQ_ARN=$(aws sqs get-queue-attributes \
-  --queue-url https://sqs.us-west-2.amazonaws.com/<account-id>/virtual-tour-jobs-dlq.fifo \
+  --queue-url https://sqs.us-west-2.amazonaws.com/<account-id>/lumina-jobs-dlq.fifo \
   --attribute-names QueueArn \
   --query 'Attributes.QueueArn' --output text)
 
 aws sqs create-queue \
-  --queue-name virtual-tour-jobs.fifo \
+  --queue-name lumina-jobs.fifo \
   --attributes "FifoQueue=true,ContentBasedDeduplication=false,\
 VisibilityTimeout=900,\
 RedrivePolicy={\"deadLetterTargetArn\":\"$DLQ_ARN\",\"maxReceiveCount\":\"3\"}" \
   --region us-west-2
 ```
 
-### virtual-tour-webhooks (Standard — despacho de webhooks)
+### lumina-webhooks (Standard — despacho de webhooks)
 
 ```bash
 aws sqs create-queue \
-  --queue-name virtual-tour-webhooks-dlq \
+  --queue-name lumina-webhooks-dlq \
   --region us-west-2
 
 DLQ_WH_ARN=$(aws sqs get-queue-attributes \
-  --queue-url https://sqs.us-west-2.amazonaws.com/<account-id>/virtual-tour-webhooks-dlq \
+  --queue-url https://sqs.us-west-2.amazonaws.com/<account-id>/lumina-webhooks-dlq \
   --attribute-names QueueArn \
   --query 'Attributes.QueueArn' --output text)
 
 aws sqs create-queue \
-  --queue-name virtual-tour-webhooks \
+  --queue-name lumina-webhooks \
   --attributes "VisibilityTimeout=600,\
 RedrivePolicy={\"deadLetterTargetArn\":\"$DLQ_WH_ARN\",\"maxReceiveCount\":\"5\"}" \
   --region us-west-2
@@ -170,7 +170,7 @@ mkdir -p ffmpeg-layer/bin
 cp ffmpeg-release-*/ffmpeg ffmpeg-layer/bin/
 cd ffmpeg-layer && zip -r ../ffmpeg-layer.zip bin/
 aws lambda publish-layer-version \
-  --layer-name virtual-tour-ffmpeg \
+  --layer-name lumina-ffmpeg \
   --description "ffmpeg static binary for Python 3.12 Amazon Linux 2023" \
   --zip-file fileb://../ffmpeg-layer.zip \
   --compatible-runtimes python3.12 \
@@ -179,12 +179,12 @@ aws lambda publish-layer-version \
 
 ---
 
-## 4. IAM Role — virtual-tour-lambda-role
+## 4. IAM Role — lumina-lambda-role
 
 ```bash
 # Crear role con trust policy para Lambda
 aws iam create-role \
-  --role-name virtual-tour-lambda-role \
+  --role-name lumina-lambda-role \
   --assume-role-policy-document '{
     "Version": "2012-10-17",
     "Statement": [{
@@ -196,8 +196,8 @@ aws iam create-role \
 
 # Política de permisos mínimos (least privilege)
 aws iam put-role-policy \
-  --role-name virtual-tour-lambda-role \
-  --policy-name virtual-tour-policy \
+  --role-name lumina-lambda-role \
+  --policy-name lumina-policy \
   --policy-document '{
     "Version": "2012-10-17",
     "Statement": [
@@ -215,8 +215,8 @@ aws iam put-role-policy \
         "Effect": "Allow",
         "Action": ["s3:PutObject", "s3:GetObject", "s3:HeadObject", "s3:GeneratePresignedUrl"],
         "Resource": [
-          "arn:aws:s3:::virtual-tour-inputs/*",
-          "arn:aws:s3:::virtual-tour-outputs/*"
+          "arn:aws:s3:::lumina-inputs/*",
+          "arn:aws:s3:::lumina-outputs/*"
         ]
       },
       {
@@ -227,8 +227,8 @@ aws iam put-role-policy \
           "sqs:DeleteMessage", "sqs:GetQueueAttributes"
         ],
         "Resource": [
-          "arn:aws:sqs:us-west-2:<account-id>:virtual-tour-jobs.fifo",
-          "arn:aws:sqs:us-west-2:<account-id>:virtual-tour-webhooks"
+          "arn:aws:sqs:us-west-2:<account-id>:lumina-jobs.fifo",
+          "arn:aws:sqs:us-west-2:<account-id>:lumina-webhooks"
         ]
       },
       {
@@ -243,7 +243,7 @@ aws iam put-role-policy \
 
 # Adjuntar policy básica de Lambda
 aws iam attach-role-policy \
-  --role-name virtual-tour-lambda-role \
+  --role-name lumina-lambda-role \
   --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
 ```
 
@@ -252,12 +252,12 @@ aws iam attach-role-policy \
 ## 5. Lambda Functions (us-west-2)
 
 ```bash
-ROLE_ARN=$(aws iam get-role --role-name virtual-tour-lambda-role \
+ROLE_ARN=$(aws iam get-role --role-name lumina-lambda-role \
   --query 'Role.Arn' --output text)
 
-# virtual-tour-api
+# lumina-api
 aws lambda create-function \
-  --function-name virtual-tour-api \
+  --function-name lumina-api \
   --runtime python3.12 \
   --handler main.handler \
   --role "$ROLE_ARN" \
@@ -266,9 +266,9 @@ aws lambda create-function \
   --memory-size 512 \
   --region us-west-2
 
-# virtual-tour-worker
+# lumina-worker
 aws lambda create-function \
-  --function-name virtual-tour-worker \
+  --function-name lumina-worker \
   --runtime python3.12 \
   --handler worker.handler \
   --role "$ROLE_ARN" \
@@ -279,14 +279,14 @@ aws lambda create-function \
 
 # SQS event source mapping para worker
 aws lambda create-event-source-mapping \
-  --function-name virtual-tour-worker \
-  --event-source-arn arn:aws:sqs:us-west-2:<account-id>:virtual-tour-jobs.fifo \
+  --function-name lumina-worker \
+  --event-source-arn arn:aws:sqs:us-west-2:<account-id>:lumina-jobs.fifo \
   --batch-size 1 \
   --region us-west-2
 
-# virtual-tour-poller (con ffmpeg layer)
+# lumina-poller (con ffmpeg layer)
 aws lambda create-function \
-  --function-name virtual-tour-poller \
+  --function-name lumina-poller \
   --runtime python3.12 \
   --handler poller.handler \
   --role "$ROLE_ARN" \
@@ -296,9 +296,9 @@ aws lambda create-function \
   --layers "$FFMPEG_LAYER_ARN" \
   --region us-west-2
 
-# virtual-tour-webhook
+# lumina-webhook
 aws lambda create-function \
-  --function-name virtual-tour-webhook \
+  --function-name lumina-webhook \
   --runtime python3.12 \
   --handler webhook.handler \
   --role "$ROLE_ARN" \
@@ -309,8 +309,8 @@ aws lambda create-function \
 
 # SQS event source mapping para webhook dispatcher
 aws lambda create-event-source-mapping \
-  --function-name virtual-tour-webhook \
-  --event-source-arn arn:aws:sqs:us-west-2:<account-id>:virtual-tour-webhooks \
+  --function-name lumina-webhook \
+  --event-source-arn arn:aws:sqs:us-west-2:<account-id>:lumina-webhooks \
   --batch-size 1 \
   --region us-west-2
 ```
@@ -321,18 +321,18 @@ aws lambda create-event-source-mapping \
 
 ```bash
 POLLER_ARN=$(aws lambda get-function \
-  --function-name virtual-tour-poller \
+  --function-name lumina-poller \
   --query 'Configuration.FunctionArn' --output text)
 
 # Crear schedule group
 aws scheduler create-schedule-group \
-  --name virtual-tour-service \
+  --name lumina \
   --region us-west-2
 
 # Crear schedule rate(1 minute) → poller
 aws scheduler create-schedule \
-  --name virtual-tour-poller \
-  --group-name virtual-tour-service \
+  --name lumina-poller \
+  --group-name lumina \
   --schedule-expression "rate(1 minute)" \
   --target "{\"Arn\": \"$POLLER_ARN\", \"RoleArn\": \"$ROLE_ARN\", \"Input\": \"{}\"}" \
   --flexible-time-window '{"Mode": "OFF"}' \
@@ -346,18 +346,18 @@ aws scheduler create-schedule \
 Setear una vez creadas las Lambdas:
 
 ```bash
-QUEUE_URL_JOBS=https://sqs.us-west-2.amazonaws.com/<account-id>/virtual-tour-jobs.fifo
-QUEUE_URL_WEBHOOKS=https://sqs.us-west-2.amazonaws.com/<account-id>/virtual-tour-webhooks
+QUEUE_URL_JOBS=https://sqs.us-west-2.amazonaws.com/<account-id>/lumina-jobs.fifo
+QUEUE_URL_WEBHOOKS=https://sqs.us-west-2.amazonaws.com/<account-id>/lumina-webhooks
 
-for fn in virtual-tour-api virtual-tour-worker virtual-tour-poller virtual-tour-webhook; do
+for fn in lumina-api lumina-worker lumina-poller lumina-webhook; do
   aws lambda update-function-configuration \
     --function-name "$fn" \
     --environment "Variables={
       SUPABASE_URL=https://<project-ref>.supabase.co,
       SUPABASE_SERVICE_KEY=<service_role_key>,
       AWS_REGION=us-west-2,
-      S3_UPLOAD_BUCKET=virtual-tour-inputs,
-      S3_OUTPUT_BUCKET=virtual-tour-outputs,
+      S3_UPLOAD_BUCKET=lumina-inputs,
+      S3_OUTPUT_BUCKET=lumina-outputs,
       TOUR_JOBS_QUEUE_URL=$QUEUE_URL_JOBS,
       WEBHOOK_QUEUE_URL=$QUEUE_URL_WEBHOOKS,
       BEDROCK_REGION=us-west-2,
@@ -382,10 +382,10 @@ done
 ```bash
 # Alarma DLQ jobs
 aws cloudwatch put-metric-alarm \
-  --alarm-name "VTS-DLQ-Jobs-HasMessages" \
+  --alarm-name "LUMINA-DLQ-Jobs-HasMessages" \
   --metric-name "ApproximateNumberOfMessagesVisible" \
   --namespace "AWS/SQS" \
-  --dimensions "Name=QueueName,Value=virtual-tour-jobs-dlq.fifo" \
+  --dimensions "Name=QueueName,Value=lumina-jobs-dlq.fifo" \
   --statistic "Maximum" \
   --period 60 \
   --threshold 0 \
@@ -396,10 +396,10 @@ aws cloudwatch put-metric-alarm \
 
 # Alarma DLQ webhooks
 aws cloudwatch put-metric-alarm \
-  --alarm-name "VTS-DLQ-Webhooks-HasMessages" \
+  --alarm-name "LUMINA-DLQ-Webhooks-HasMessages" \
   --metric-name "ApproximateNumberOfMessagesVisible" \
   --namespace "AWS/SQS" \
-  --dimensions "Name=QueueName,Value=virtual-tour-webhooks-dlq" \
+  --dimensions "Name=QueueName,Value=lumina-webhooks-dlq" \
   --statistic "Maximum" \
   --period 60 \
   --threshold 5 \
@@ -416,11 +416,11 @@ aws cloudwatch put-metric-alarm \
 ```bash
 # HTTP API (más barato, soporte nativo Lambda proxy)
 aws apigatewayv2 create-api \
-  --name virtual-tour-api \
+  --name lumina-api \
   --protocol-type HTTP \
   --region us-west-2
 
-# Integración con la Lambda virtual-tour-api
+# Integración con la Lambda lumina-api
 # (configurar desde consola o con aws apigatewayv2 create-integration)
 ```
 
@@ -432,6 +432,6 @@ Configurar en el repositorio GitHub:
 
 | Secret | Valor |
 |--------|-------|
-| `VTS_AWS_ACCESS_KEY_ID` | Access key de un IAM user con permiso `lambda:UpdateFunctionCode` |
-| `VTS_AWS_SECRET_ACCESS_KEY` | Secret key correspondiente |
-| `VTS_LAMBDA_EXECUTION_ROLE_ARN` | ARN de `virtual-tour-lambda-role` |
+| `LUMINA_AWS_ACCESS_KEY_ID` | Access key de un IAM user con permiso `lambda:UpdateFunctionCode` |
+| `LUMINA_AWS_SECRET_ACCESS_KEY` | Secret key correspondiente |
+| `LUMINA_LAMBDA_EXECUTION_ROLE_ARN` | ARN de `lumina-lambda-role` |

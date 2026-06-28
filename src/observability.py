@@ -3,7 +3,7 @@ Logging estructurado JSON y métricas CloudWatch.
 Satisface: AC-13 (trazabilidad por tenant), B-11.
 
 Todas las Lambdas importan este módulo para configurar logging JSON
-y emitir métricas custom al namespace VirtualTourService.
+y emitir métricas custom al namespace Lumina.
 """
 
 import json
@@ -17,7 +17,7 @@ from botocore.exceptions import ClientError
 from src.config.settings import get_settings
 
 # Namespace CloudWatch para el servicio
-CLOUDWATCH_NAMESPACE = "VirtualTourService"
+CLOUDWATCH_NAMESPACE = "Lumina"
 
 
 class JsonFormatter(logging.Formatter):
@@ -27,7 +27,7 @@ class JsonFormatter(logging.Formatter):
     No incluye datos sensibles (secrets, tokens, paths de usuario).
     """
 
-    SERVICE_NAME = "virtual-tour-service"
+    SERVICE_NAME = "lumina"
 
     def format(self, record: logging.LogRecord) -> str:
         base = {
@@ -81,7 +81,7 @@ def configure_logging(component: str) -> None:
 
 class CloudWatchMetrics:
     """
-    Emite métricas custom al namespace VirtualTourService.
+    Emite métricas custom al namespace Lumina.
     Satisface AC-13: trazabilidad de costo y uso por tenant.
 
     Métricas emitidas:

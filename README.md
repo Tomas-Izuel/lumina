@@ -1,4 +1,4 @@
-# virtual-tour-service
+# lumina
 
 Servicio multi-tenant de generación asíncrona de virtual tours usando
 **Luma Ray 2** en Amazon Bedrock. Diseñado para Propital, Propirent y Orkezto.
@@ -20,7 +20,7 @@ Servicio multi-tenant de generación asíncrona de virtual tours usando
 ## Estructura
 
 ```
-virtual-tour-service/
+lumina/
 ├── main.py          # Lambda handler — API (Mangum)
 ├── worker.py        # Lambda handler — SQS worker
 ├── poller.py        # Lambda handler — EventBridge Scheduler
@@ -51,13 +51,13 @@ virtual-tour-service/
 ├── docs/aws-infra-setup.md        # Comandos AWS CLI para crear recursos
 ├── requirements.txt
 ├── requirements-dev.txt
-└── .github/workflows/cd_virtual_tour_service.yml
+└── .github/workflows/cd_lumina.yml
 ```
 
 ## Desarrollo local
 
 ```bash
-cd virtual-tour-service
+cd lumina
 cp .env.example .env   # completar con valores reales
 pip install -r requirements-dev.txt
 

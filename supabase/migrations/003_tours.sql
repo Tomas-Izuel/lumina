@@ -1,6 +1,6 @@
 -- =============================================================================
 -- Migration 003 — Tours table
--- Service: virtual-tour-service
+-- Service: lumina
 -- Date: 2026-06-28
 -- AC covered: AC-1 (accepted status), AC-4 (credit_consumed flag),
 --             AC-5 (credit_consumed / status state machine),

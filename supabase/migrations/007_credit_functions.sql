@@ -1,6 +1,6 @@
 -- =============================================================================
 -- Migration 007 — Atomic credit SQL functions
--- Service: virtual-tour-service
+-- Service: lumina
 -- Date: 2026-06-28
 -- AC covered: AC-5 (exactly 1 credit deducted on success; 0 on failure),
 --             AC-6 (no state where credit charged but no video delivered,

@@ -82,7 +82,7 @@ def assign_credits(
     logger.info(
         "Créditos asignados",
         extra={
-            "service": "virtual-tour-service",
+            "service": "lumina",
             "component": "api",
             "action": "credits_assigned",
             "tenant_id": tenant.id,

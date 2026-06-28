@@ -109,7 +109,7 @@ def create_tour(
     logger.info(
         "Tour aceptado",
         extra={
-            "service": "virtual-tour-service",
+            "service": "lumina",
             "component": "api",
             "action": "tour_accepted",
             "tenant_id": tenant.id,

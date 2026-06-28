@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 def create_app() -> FastAPI:
     app = FastAPI(
-        title="Virtual Tour Service",
+        title="Lumina",
         description=(
             "Servicio multi-tenant de generación asíncrona de virtual tours "
             "usando Luma Ray 2 en Amazon Bedrock. "

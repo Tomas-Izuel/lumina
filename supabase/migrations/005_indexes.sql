@@ -1,6 +1,6 @@
 -- =============================================================================
 -- Migration 005 — Performance indexes
--- Service: virtual-tour-service
+-- Service: lumina
 -- Date: 2026-06-28
 -- AC covered: AC-9 (fast tour lookups), AC-11 (RLS policy column coverage),
 --             AC-13 (audit queries), AC-7 (idempotency check performance)

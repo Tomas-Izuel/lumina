@@ -80,14 +80,14 @@ def test_luma_ray2_get_clip_status_completed():
     mock_bedrock.get_async_invoke.return_value = {
         "status": "Completed",
         "outputDataConfig": {
-            "s3OutputDataConfig": {"s3Uri": "s3://virtual-tour-outputs/tours/t1/t2/clip_000"}
+            "s3OutputDataConfig": {"s3Uri": "s3://lumina-outputs/tours/t1/t2/clip_000"}
         },
     }
 
     with patch("boto3.client", return_value=mock_bedrock):
         backend = LumaRay2BedrockBackend()
     backend._bedrock = mock_bedrock
-    backend._output_bucket = "virtual-tour-outputs"
+    backend._output_bucket = "lumina-outputs"
 
     ref = ClipInvocationRef(invocation_arn="arn:test", backend="luma_ray2")
     status = backend.get_clip_status(ref)

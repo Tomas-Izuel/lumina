@@ -1,5 +1,5 @@
 """
-Fixtures compartidos para tests de virtual-tour-service.
+Fixtures compartidos para tests de lumina.
 
 Patrón crítico para get_supabase (lru_cache):
   get_supabase() usa @lru_cache. Para mockear la BD en tests locales:
@@ -21,8 +21,8 @@ os.environ.setdefault("SUPABASE_URL", "https://test.supabase.co")
 os.environ.setdefault("SUPABASE_SERVICE_KEY", "test-service-key")
 os.environ.setdefault("ADMIN_API_KEY", "test-admin-key")
 os.environ.setdefault("AWS_REGION", "us-west-2")
-os.environ.setdefault("S3_UPLOAD_BUCKET", "virtual-tour-inputs-test")
-os.environ.setdefault("S3_OUTPUT_BUCKET", "virtual-tour-outputs-test")
+os.environ.setdefault("S3_UPLOAD_BUCKET", "lumina-inputs-test")
+os.environ.setdefault("S3_OUTPUT_BUCKET", "lumina-outputs-test")
 os.environ.setdefault("TOUR_JOBS_QUEUE_URL", "https://sqs.us-west-2.amazonaws.com/123456789/test.fifo")
 os.environ.setdefault("WEBHOOK_QUEUE_URL", "https://sqs.us-west-2.amazonaws.com/123456789/test-webhooks")
 os.environ.setdefault("BEDROCK_REGION", "us-west-2")

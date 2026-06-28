@@ -32,12 +32,12 @@ router = APIRouter(prefix="/admin", tags=["Admin"])
 
 def _generate_api_key() -> tuple[str, str, str]:
     """
-    Genera key_id (legible, prefijado con 'vts_') y secret (random 40 chars).
+    Genera key_id (legible, prefijado con 'lumina_') y secret (random 40 chars).
     Retorna (key_id, secret, bcrypt_hash_of_secret).
     El secret NO se almacena — solo el hash.
     """
     # key_id: legible, prefijado para identificar el servicio
-    key_id = "vts_" + secrets.token_urlsafe(16)
+    key_id = "lumina_" + secrets.token_urlsafe(16)
 
     # secret: 40 chars alfanuméricos + símbolos
     alphabet = string.ascii_letters + string.digits
@@ -92,7 +92,7 @@ def create_tenant(
     logger.info(
         "Tenant creado",
         extra={
-            "service": "virtual-tour-service",
+            "service": "lumina",
             "component": "api",
             "action": "tenant_created",
             "tenant_id": tenant_id,
