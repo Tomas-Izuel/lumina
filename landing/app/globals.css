@@ -1,574 +1,112 @@
 /* ============================================================
-   Lumina landing — design system + scroll-driven hero
-   Estética: gris/neutro del render + acento morado Lumina.
-   Animaciones 100% CSS (scroll-driven), cero JS.
+   Lumina landing — port fiel de Lumina.dc.html (Claude Design)
+   El diseño usa estilos inline; aquí viven: reset, keyframes,
+   estados de reveal/typewriter y los overrides responsive
+   (el artefacto original es solo desktop).
    ============================================================ */
 
-:root {
-  --bg: #0b0710;
-  --bg-soft: #140d20;
-  --surface: rgba(255, 255, 255, 0.04);
-  --border: rgba(167, 139, 250, 0.18);
-  --primary: #7c3aed;
-  --primary-light: #a78bfa;
-  --primary-deep: #4c1d95;
-  --sky: #38bdf8;
-  --text: #f5f3ff;
-  --text-dim: #c4b5fd;
-  --text-mute: #aaa0c8; /* ≥4.5:1 sobre --bg (WCAG AA body) */
-  --maxw: 1200px;
-  --ease: cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html {
-  scroll-behavior: smooth;
-  -webkit-text-size-adjust: 100%;
-  color-scheme: dark;
-}
-
-/* Foco de teclado visible y de alto contraste sobre fondo oscuro */
-a:focus-visible,
-.btn:focus-visible {
-  outline: 2px solid var(--primary-light);
-  outline-offset: 3px;
-  border-radius: 8px;
-}
-
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
 body {
-  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Helvetica, Arial, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.5;
+  background: #f1eef7;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  color: #2a2433;
   -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
   overflow-x: hidden;
 }
+::selection { background: rgba(170,152,202,0.22); }
+a { color: inherit; }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
+/* ---------- Variables tipográficas (next/font) ---------- */
+.font-serif { font-family: var(--font-serif), "Instrument Serif", serif; }
+.font-mono { font-family: var(--font-mono), "JetBrains Mono", monospace; }
 
-/* ---------- Botones ---------- */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  padding: 0.95rem 1.7rem;
-  border-radius: 999px;
-  font-weight: 600;
-  font-size: 1.05rem;
-  letter-spacing: -0.01em;
-  cursor: pointer;
-  border: 1px solid transparent;
-  transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease),
-    background 0.2s var(--ease);
-}
-.btn-primary {
-  background: linear-gradient(100deg, var(--primary) 0%, var(--sky) 130%);
-  color: #fff;
-  box-shadow: 0 10px 40px -8px rgba(124, 58, 237, 0.6);
-}
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 16px 50px -8px rgba(124, 58, 237, 0.75);
-}
-.btn-ghost {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: var(--border);
-  color: var(--text);
-  backdrop-filter: blur(8px);
-}
-.btn-ghost:hover {
-  background: rgba(255, 255, 255, 0.12);
-  transform: translateY(-2px);
-}
+/* ---------- Keyframes (del diseño) ---------- */
+@keyframes lumBlob { 0%{transform:translate(0,0) scale(1);} 50%{transform:translate(30px,-24px) scale(1.08);} 100%{transform:translate(0,0) scale(1);} }
+@keyframes lumBlob2 { 0%{transform:translate(0,0) scale(1);} 50%{transform:translate(-28px,22px) scale(1.06);} 100%{transform:translate(0,0) scale(1);} }
+@keyframes lumFloat { 0%{transform:translateY(0);} 50%{transform:translateY(-9px);} 100%{transform:translateY(0);} }
+@keyframes lumFlow { 0%{background-position:120% 0;} 100%{background-position:-120% 0;} }
+@keyframes lumRing { 0%{transform:scale(0.7);opacity:0.55;} 100%{transform:scale(1.9);opacity:0;} }
+@keyframes lumKen { 0%{transform:scale(1.04) translate(0,0);} 50%{transform:scale(1.14) translate(-2.5%,-1.5%);} 100%{transform:scale(1.04) translate(0,0);} }
+@keyframes lumProg { 0%{width:4%;} 92%{width:100%;} 100%{width:100%;} }
+@keyframes lumSpin { to{transform:rotate(360deg);} }
+@keyframes lumPacket { 0%{left:-6%;opacity:0;} 8%{opacity:1;} 88%{opacity:1;} 100%{left:104%;opacity:0;} }
+@keyframes lumPulseSoft { 0%{opacity:0.4;} 50%{opacity:1;} 100%{opacity:0.4;} }
+@keyframes lumSheen { 0%{background-position:-180% 0;} 100%{background-position:180% 0;} }
+@keyframes lumGrid { 0%{background-position:0 0;} 100%{background-position:46px 46px;} }
+@keyframes lumScanY { 0%{top:-12%;opacity:0;} 12%{opacity:1;} 88%{opacity:1;} 100%{top:104%;opacity:0;} }
+@keyframes lumUnderline { 0%{transform:scaleX(0);} 100%{transform:scaleX(1);} }
+@keyframes lumBeamPath { from{stroke-dashoffset:666;} to{stroke-dashoffset:0;} }
+@keyframes lumPulseScale { 0%{transform:scale(1);} 50%{transform:scale(1.06);} 100%{transform:scale(1);} }
+@keyframes lumStroke { from{stroke-dashoffset:0;} to{stroke-dashoffset:-230;} }
+@keyframes lumBlink { 0%,50%{opacity:1;} 50.01%,100%{opacity:0;} }
+@keyframes lumFadeIn { to{opacity:1;} }
 
-/* ---------- Topbar ---------- */
-.topbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1.3rem clamp(1.2rem, 5vw, 3rem);
-  background: linear-gradient(180deg, rgba(11, 7, 16, 0.7) 0%, transparent 100%);
+/* ---------- Reveal on scroll ---------- */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 0.7s cubic-bezier(0.2,0.7,0.2,1), transform 0.7s cubic-bezier(0.2,0.7,0.2,1);
 }
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  font-weight: 800;
-  font-size: 1.4rem;
-  letter-spacing: -0.02em;
+[data-reveal].is-visible { opacity: 1; transform: none; }
+
+/* ---------- Typewriter (hero h1) ---------- */
+[data-tw] {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.16em);
+  transition: opacity 0.34s ease, transform 0.34s ease;
 }
-.brand svg {
-  width: 28px;
-  height: 28px;
-}
-.brand-name {
-  background: linear-gradient(100deg, #fff 0%, var(--primary-light) 60%, var(--sky) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
+[data-tw].tw-in { opacity: 1; transform: none; }
 
 /* ============================================================
-   HERO scrollytelling
+   RESPONSIVE — overrides sobre los estilos inline del diseño
+   (!important porque los inline ganan especificidad)
    ============================================================ */
-/* Baseline (todo navegador / reduced-motion / crawler): el video es un hero
-   contenido y el contenido vive en secciones apiladas (.flow-beats).
-   El pinning + scrollytelling se activa como ENHANCEMENT más abajo. */
-.scrolly {
-  position: relative;
-}
-.stage {
-  position: relative;
-  height: 86svh;
-  min-height: 34rem;
-  display: grid;
-  overflow: hidden;
-}
-.stage > * {
-  grid-area: 1 / 1;
-}
-/* Por defecto los beats superpuestos del stage están ocultos: solo cobran
-   sentido secuenciados por la animación de scroll. */
-.stage .beat {
-  display: none;
+
+@media (max-width: 960px) {
+  /* nav */
+  .nav-links { display: none !important; }
+  /* hero a una columna; el arte va arriba */
+  .hero-grid { grid-template-columns: 1fr !important; gap: 8px !important; }
+  .hero-grid > * { min-width: 0 !important; }
+  .hero-art { height: 360px !important; order: -1; margin-bottom: 8px; }
+  /* bento: 2 columnas */
+  .bento { grid-template-columns: repeat(2, 1fr) !important; }
+  .bento > * { grid-column: span 2 !important; }
+  /* paneles usar / sobre a una columna */
+  .panel-grid { grid-template-columns: 1fr !important; gap: 26px !important; }
+  .sobre-grid { grid-template-columns: 1fr !important; gap: 28px !important; padding: 34px !important; }
+  /* flujo: stage más bajo */
+  .beam-stage { height: 360px !important; }
 }
 
-.video,
-.video-fallback {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  scale: 1.08; /* base; se anima en desktop */
-  transform-origin: 60% 45%;
-  z-index: 0;
-}
-.video-fallback {
-  display: none; /* solo se usa bajo prefers-reduced-motion */
-}
-/* Overlays para legibilidad del texto sobre el render gris */
-.scrim {
-  z-index: 1;
-  pointer-events: none;
-  background:
-    /* piso lateral: garantiza contraste de los beats izq/der en cualquier frame */
-    linear-gradient(90deg, rgba(11, 7, 16, 0.62) 0%, rgba(11, 7, 16, 0.12) 26%, rgba(11, 7, 16, 0.12) 74%, rgba(11, 7, 16, 0.62) 100%),
-    radial-gradient(120% 90% at 50% 0%, rgba(11, 7, 16, 0.55) 0%, transparent 45%),
-    radial-gradient(120% 90% at 50% 100%, rgba(11, 7, 16, 0.7) 0%, transparent 50%),
-    /* piso uniforme mínimo independiente del frame */
-    linear-gradient(180deg, rgba(11, 7, 16, 0.42) 0%, rgba(11, 7, 16, 0.28) 50%, rgba(11, 7, 16, 0.55) 100%);
-}
-.scrim-tint {
-  z-index: 1;
-  pointer-events: none;
-  mix-blend-mode: soft-light;
-  background: radial-gradient(80% 60% at 25% 70%, rgba(124, 58, 237, 0.5) 0%, transparent 60%);
+@media (max-width: 640px) {
+  .hero-h1 { font-size: 52px !important; }
+  .sec-h2 { font-size: 38px !important; }
+  /* bento a una columna */
+  .bento { grid-template-columns: 1fr !important; gap: 14px !important; }
+  /* hero arte: escala las piezas para que entren */
+  .hero-art { height: 320px !important; }
+  .hero-photos { gap: 8px !important; }
+  .hero-photo { width: 92px !important; height: 70px !important; }
+  .hero-tourframe { width: 280px !important; margin-left: -140px !important; }
+  .hero-iapill { left: 0 !important; top: 120px !important; }
+  /* stats con wrap */
+  .hero-stats { flex-wrap: wrap !important; gap: 18px !important; }
+  /* el bento "resultado" (D) apila imagen + texto */
+  .bento-d-inner { grid-template-columns: 1fr !important; gap: 16px !important; }
+  /* flujo: nodos y hub más chicos, stage más bajo */
+  .beam-stage { height: 300px !important; }
+  .beam-node { width: 46px !important; height: 46px !important; }
+  .beam-hub { width: 92px !important; height: 92px !important; }
+  .beam-hub-core { width: 74px !important; height: 74px !important; }
 }
 
-/* ---------- Capa de contenido (intro + beats) ---------- */
-.layer {
-  z-index: 2;
-  align-self: center;
-  width: 100%;
-  max-width: var(--maxw);
-  margin-inline: auto;
-  padding-inline: clamp(1.2rem, 5vw, 3rem);
-}
-.intro {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.4rem;
-}
-.eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.45rem 1.1rem;
-  border-radius: 999px;
-  background: rgba(124, 58, 237, 0.18);
-  border: 1px solid var(--border);
-  color: var(--text-dim);
-  font-size: 0.95rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  white-space: nowrap;
-  backdrop-filter: blur(8px);
-}
-.eyebrow svg {
-  width: 1.15em;
-  height: 1.15em;
-  flex-shrink: 0;
-}
-.intro h1 {
-  font-size: clamp(2.8rem, 8vw, 6rem);
-  line-height: 1.02;
-  font-weight: 800;
-  letter-spacing: -0.035em;
-  max-width: 16ch;
-  text-shadow: 0 4px 40px rgba(0, 0, 0, 0.5);
-}
-.intro h1 .grad {
-  background: linear-gradient(100deg, #fff 0%, var(--primary-light) 55%, var(--sky) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-.intro p {
-  font-size: clamp(1.1rem, 2.2vw, 1.5rem);
-  color: var(--text-dim);
-  max-width: 42ch;
-  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.6);
-}
-.intro .actions {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin-top: 0.5rem;
-}
-.scroll-cue {
-  margin-top: 1.5rem;
-  font-size: 0.9rem;
-  color: var(--text-mute);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-}
-.scroll-cue .mouse {
-  width: 26px;
-  height: 42px;
-  border: 2px solid var(--text-mute);
-  border-radius: 14px;
-  position: relative;
-}
-.scroll-cue .mouse::after {
-  content: "";
-  position: absolute;
-  top: 7px;
-  left: 50%;
-  translate: -50% 0;
-  width: 4px;
-  height: 8px;
-  border-radius: 4px;
-  background: var(--text-dim);
-  animation: wheel 1.6s var(--ease) infinite;
-}
-@keyframes wheel {
-  0% { opacity: 0; transform: translateY(0); }
-  40% { opacity: 1; }
-  100% { opacity: 0; transform: translateY(12px); }
-}
-
-/* ---------- Beats (textos intercalados) ---------- */
-.beat {
-  max-width: 30rem;
-}
-.beat .num {
-  font-size: 0.95rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  color: var(--primary-light);
-  display: block;
-  margin-bottom: 0.8rem;
-}
-.beat h2 {
-  font-size: clamp(2rem, 5vw, 3.4rem);
-  line-height: 1.05;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.55);
-}
-.beat p {
-  margin-top: 1rem;
-  font-size: clamp(1.05rem, 2vw, 1.35rem);
-  color: var(--text-dim);
-  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.6);
-}
-.beat .actions {
-  margin-top: 1.6rem;
-}
-.beat.left {
-  justify-self: start;
-  text-align: left;
-  margin-inline: clamp(1.5rem, 7vw, 7rem) auto;
-}
-.beat.right {
-  justify-self: end;
-  text-align: right;
-  margin-inline: auto clamp(1.5rem, 7vw, 7rem);
-}
-.beat.center {
-  justify-self: center;
-  text-align: center;
-  max-width: 38rem;
-  margin-inline: auto;
-}
-.beat.center .actions {
-  display: flex;
-  justify-content: center;
-}
-
-/* Estado por defecto / fallback (sin scroll-timeline): todo visible */
-.intro,
-.beat {
-  opacity: 1;
-}
-
-/* ============================================================
-   Animaciones scroll-driven — solo si el navegador las soporta
-   y en desktop con movimiento permitido.
-   ============================================================ */
-@supports (animation-timeline: scroll()) {
-  @media (min-width: 880px) and (prefers-reduced-motion: no-preference) {
-    /* Activar el modo pinned scrollytelling */
-    .scrolly {
-      height: 460vh;
-      view-timeline-name: --story;
-      view-timeline-axis: block;
-    }
-    .stage {
-      position: sticky;
-      top: 0;
-      height: 100svh;
-      min-height: 0;
-    }
-    .stage .beat {
-      display: block;
-    }
-    .flow-beats {
-      display: none;
-    }
-    .video {
-      animation: heroZoom linear both;
-      animation-timeline: --story;
-      animation-range: contain 0% contain 100%;
-    }
-    @keyframes heroZoom {
-      from { scale: 1.04; }
-      to { scale: 1.32; }
-    }
-
-    .intro {
-      animation: introOut linear both;
-      animation-timeline: --story;
-      animation-range: contain 0% contain 12%;
-    }
-    @keyframes introOut {
-      0% { opacity: 1; transform: translateY(0); filter: blur(0); }
-      100% { opacity: 0; transform: translateY(-40px); filter: blur(6px); }
-    }
-
-    .beat {
-      animation-timing-function: var(--ease);
-      animation-fill-mode: both;
-      animation-name: beat;
-      animation-timeline: --story;
-    }
-    .beat.left { animation-range: contain 16% contain 40%; --from-x: -70px; }
-    .beat.right { animation-range: contain 42% contain 66%; --from-x: 70px; }
-    .beat.center { animation-range: contain 68% contain 94%; --from-x: 0px; }
-    @keyframes beat {
-      0% { opacity: 0; transform: translateX(var(--from-x, 0)) translateY(20px); }
-      18% { opacity: 1; transform: none; }
-      82% { opacity: 1; transform: none; }
-      100% { opacity: 0; transform: translateY(-30px); }
-    }
-  }
-}
-
-/* ============================================================
-   MOBILE — variante óptima: sin pinning ni scroll-jacking.
-   El video es un hero contenido y los beats se apilan,
-   revelándose suavemente al entrar en viewport (view-timeline).
-   ============================================================ */
-@media (max-width: 879px) {
-  .video {
-    scale: 1.02;
-  }
-  /* Intro arriba con espacio para no chocar con el topbar fijo */
-  .stage .intro {
-    align-self: start;
-    padding-top: 5.5rem;
-    padding-bottom: 2.5rem;
-    gap: 1.1rem;
-  }
-}
-
-/* Secciones de texto en flujo: baseline mostrada SIEMPRE (legible sin JS y
-   para crawlers). El enhancement desktop las oculta cuando el pinning corre. */
-.flow-beats {
-  padding: clamp(3rem, 12vw, 6rem) clamp(1.2rem, 6vw, 3rem);
-  display: flex;
-  flex-direction: column;
-  gap: clamp(3rem, 14vw, 6rem);
-}
-.m-beat {
-  max-width: 32rem;
-}
-.m-beat.left { align-self: flex-start; text-align: left; }
-.m-beat.right { align-self: flex-end; text-align: right; }
-.m-beat.center { align-self: center; text-align: center; }
-.m-beat .num {
-  font-size: 0.9rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  color: var(--primary-light);
-  display: block;
-  margin-bottom: 0.6rem;
-}
-.m-beat h2 {
-  font-size: clamp(1.9rem, 8vw, 2.6rem);
-  line-height: 1.08;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-}
-.m-beat p {
-  margin-top: 0.8rem;
-  font-size: 1.1rem;
-  color: var(--text-dim);
-}
-.m-beat .actions { margin-top: 1.4rem; }
-
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .m-beat {
-      animation: revealUp linear both;
-      animation-timeline: view();
-      animation-range: entry 5% cover 32%;
-    }
-    @keyframes revealUp {
-      from { opacity: 0; transform: translateY(40px); }
-      to { opacity: 1; transform: none; }
-    }
-  }
-}
-
-/* ============================================================
-   Sección de cierre (valor + CTA) y footer
-   ============================================================ */
-.section {
-  position: relative;
-  z-index: 3;
-  background:
-    radial-gradient(80% 60% at 50% 0%, rgba(124, 58, 237, 0.16) 0%, transparent 60%),
-    var(--bg);
-  padding: clamp(4rem, 12vw, 8rem) clamp(1.2rem, 6vw, 3rem);
-}
-.section-inner {
-  max-width: var(--maxw);
-  margin-inline: auto;
-}
-.section h2 {
-  font-size: clamp(2rem, 5vw, 3.2rem);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  text-align: center;
-  max-width: 18ch;
-  margin-inline: auto;
-}
-.section .lead {
-  text-align: center;
-  color: var(--text-dim);
-  font-size: clamp(1.05rem, 2vw, 1.3rem);
-  max-width: 46ch;
-  margin: 1.2rem auto 0;
-}
-.feature-grid {
-  margin-top: clamp(2.5rem, 6vw, 4rem);
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1.2rem;
-}
-.feature {
-  padding: 1.8rem;
-  border-radius: 20px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  transition: transform 0.25s var(--ease), border-color 0.25s var(--ease);
-}
-.feature:hover {
-  transform: translateY(-4px);
-  border-color: rgba(167, 139, 250, 0.4);
-}
-.feature .ic {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  display: grid;
-  place-items: center;
-  background: rgba(124, 58, 237, 0.18);
-  margin-bottom: 1rem;
-  font-size: 1.5rem;
-}
-.feature h3 {
-  font-size: 1.3rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-}
-.feature p {
-  margin-top: 0.6rem;
-  color: var(--text-mute);
-  font-size: 1rem;
-}
-.cta-final {
-  margin-top: clamp(3rem, 8vw, 5rem);
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.4rem;
-  padding: clamp(2.5rem, 6vw, 4rem);
-  border-radius: 28px;
-  background:
-    radial-gradient(120% 120% at 50% 0%, rgba(124, 58, 237, 0.25) 0%, transparent 55%),
-    var(--bg-soft);
-  border: 1px solid var(--border);
-}
-
-footer {
-  border-top: 1px solid var(--border);
-  padding: 2.5rem clamp(1.2rem, 6vw, 3rem);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  align-items: center;
-  justify-content: space-between;
-  color: var(--text-mute);
-  font-size: 0.95rem;
-}
-footer .links {
-  display: flex;
-  gap: 1.5rem;
-}
-footer .links a:hover {
-  color: var(--text-dim);
-}
-
-/* prefers-reduced-motion: cortar animaciones decorativas */
 @media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; }
+  [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
+  [data-tw] { opacity: 1 !important; transform: none !important; transition: none !important; }
   html { scroll-behavior: auto; }
-  .scroll-cue .mouse::after { animation: none; }
-  * { transition: none !important; }
-  /* Sin movimiento continuo: ocultar el video en loop y mostrar el poster */
-  .video { display: none; }
-  .video-fallback { display: block; }
 }
