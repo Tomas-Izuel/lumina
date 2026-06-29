@@ -1,29 +1,48 @@
 # landing
 
-Sitio de marketing de Lumina.
+Sitio de marketing de Lumina — primera pieza pública de la visión SaaS v2.
+Comunica la propuesta de valor (recorridos virtuales con IA en minutos) y el
+call-to-action de acceso.
 
-## Proposito
+## Stack
 
-Primera pieza publica de la vision SaaS v2 de Lumina. Orientado a consumidores
-externos y tomadores de decision: inmobiliarias, brokers y proveedores de tecnologia
-inmobiliaria que quieran contratar el servicio de generacion de virtual tours.
+- **Next.js 15** (App Router) + **React 19** + **TypeScript**. Deploy en **Vercel**.
+- **100% estático**: la página se prerenderiza en build (SSG). Cero JS de cliente
+  propio — las animaciones son **CSS scroll-driven** (`view-timeline` / `animation-timeline`).
+- **SEO** con las utilities de Next: Metadata API (Open Graph, Twitter, canonical,
+  robots), `app/sitemap.ts`, `app/robots.ts`, `app/opengraph-image.tsx` (OG generada
+  en build) y JSON-LD (`Organization` / `WebSite` / `SoftwareApplication`).
 
-Comunicara la propuesta de valor del servicio (tours de video IA en minutos), los
-planes de suscripcion disponibles y el call-to-action para el registro o contacto
-comercial.
+## Hero scrollytelling
 
-## Stack previsto
+- **Desktop** (≥880px, con `prefers-reduced-motion: no-preference` y soporte de
+  scroll-driven animations): el video queda *pinned* (`position: sticky`) y escala
+  mientras se hace scroll; 3 textos se revelan intercalados — **izquierda → derecha
+  → centro** — secuenciados con `view-timeline` sobre el contenedor del hero.
+- **Mobile / fallback** (sin soporte, reduced-motion o crawlers): baseline legible —
+  el video es un hero contenido (autoplay, `muted`, `loop`, `playsInline`) y los 3
+  textos pasan a secciones apiladas que se revelan suavemente con `view()`. El
+  contenido siempre está en el DOM y visible (accesibilidad + SEO).
 
-Por definir. Probablemente Next.js o similar (React-based SSG/SSR).
+## Assets
 
-## Estado
+`public/hero.webm` (VP9) + `public/hero.mp4` (fallback H.264, muted, faststart) +
+`public/hero-poster.jpg` (poster/LCP). Generados desde el `Hero.mp4` original con ffmpeg.
 
-Placeholder — pendiente de construccion. Esta carpeta reserva el lugar en el
-monorepo para la app de marketing de la vision v2.
+## Desarrollo
 
-## Convencion de monorepo
+```bash
+cd landing
+npm install
+npm run dev      # http://localhost:3000
+npm run build    # build de producción (SSG)
+npm start        # servir el build
+```
 
-Las apps del monorepo Lumina viven en carpetas hermanas en la raiz del repositorio:
-`lumina/` (backend), `landing/` (sitio de marketing), `web/` (portal SaaS).
-Cada app es autonoma con sus propias dependencias. No hay gestor de workspaces
-compartido por el momento.
+`NEXT_PUBLIC_SITE_URL` configura la URL canónica / sitemap (default `https://lumina.propital.com`).
+
+## Convención de monorepo
+
+Las apps de Lumina viven en carpetas hermanas en la raíz: `lumina/` (backend),
+`landing/` (este sitio), `web/` (portal SaaS). Cada app es autónoma con sus
+propias dependencias; sin gestor de workspaces por ahora.
