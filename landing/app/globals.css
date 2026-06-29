@@ -83,16 +83,16 @@ a { color: inherit; }
 }
 
 @media (max-width: 640px) {
-  .hero-h1 { font-size: 52px !important; }
+  .hero-h1 { font-size: 44px !important; }
   .sec-h2 { font-size: 38px !important; }
   /* bento a una columna */
   .bento { grid-template-columns: 1fr !important; gap: 14px !important; }
   /* hero arte: escala las piezas para que entren */
-  .hero-art { height: 320px !important; }
+  .hero-art { height: 400px !important; }
   .hero-photos { gap: 8px !important; }
   .hero-photo { width: 92px !important; height: 70px !important; }
-  .hero-tourframe { width: 280px !important; margin-left: -140px !important; }
-  .hero-iapill { left: 0 !important; top: 120px !important; }
+  .hero-tourframe { width: 280px !important; margin-left: -140px !important; top: 196px !important; }
+  .hero-iapill { left: 0 !important; top: 124px !important; }
   /* stats con wrap */
   .hero-stats { flex-wrap: wrap !important; gap: 18px !important; }
   /* el bento "resultado" (D) apila imagen + texto */

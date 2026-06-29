@@ -4,9 +4,9 @@
    Fondo: grid enmascarado animado + beams SVG que aparecen a 1.6s. */
 
 const PHOTOS = [
-  { src: "/room-living.jpg", label: "Living", n: "01", rot: "-5deg", mt: "0" },
-  { src: "/room-cocina.jpg", label: "Cocina", n: "02", rot: "2deg", mt: "20px" },
-  { src: "/room-dormitorio.jpg", label: "Dormitorio", n: "03", rot: "5deg", mt: "6px" },
+  { src: "/room-living.jpg", label: "Living", n: "01", rot: "-8deg", mt: "0", z: 3 },
+  { src: "/room-cocina.jpg", label: "Cocina", n: "02", rot: "-1deg", mt: "16px", z: 2 },
+  { src: "/room-dormitorio.jpg", label: "Dormitorio", n: "03", rot: "7deg", mt: "4px", z: 1 },
 ];
 
 const FLOAT = ["6s", "6.5s", "5.9s"];
@@ -105,10 +105,10 @@ export default function Hero() {
             <span data-tw style={{ fontStyle: "italic", color: "#9a83bf" }}>que</span>{" "}
             <span data-tw style={{ position: "relative", fontStyle: "italic", color: "#9a83bf", whiteSpace: "nowrap" }}>
               vende
-              <span style={{ position: "absolute", left: 0, right: 0, bottom: 7, height: 7, borderRadius: 4, background: "linear-gradient(90deg,#cabbe9,#efdde5)", transformOrigin: "left", animation: "lumUnderline 0.9s cubic-bezier(0.4,0,0.2,1) 1.55s both", zIndex: -1 }} />
+              <span style={{ position: "absolute", left: 0, width: "1.55em", bottom: 7, height: 7, borderRadius: 4, background: "linear-gradient(90deg,#cabbe9,#efdde5)", transformOrigin: "left", animation: "lumUnderline 0.9s cubic-bezier(0.4,0,0.2,1) 1.55s both", zIndex: -1 }} />
+              <span style={{ color: "#241f30", fontStyle: "normal" }}>.</span>
+              <span style={{ display: "inline-block", width: 5, height: "0.78em", background: "#9a83bf", borderRadius: 2, marginLeft: 8, verticalAlign: "-0.06em", animation: "lumBlink 0.9s steps(1) infinite" }} />
             </span>
-            <span data-tw>.</span>
-            <span style={{ display: "inline-block", width: 5, height: "0.78em", background: "#9a83bf", borderRadius: 2, marginLeft: 8, verticalAlign: "-0.06em", animation: "lumBlink 0.9s steps(1) infinite" }} />
           </h1>
 
           <p style={{ fontSize: 19, lineHeight: 1.55, color: "#5a5369", maxWidth: 460, margin: "0 0 34px" }}>
@@ -145,9 +145,9 @@ export default function Hero() {
 
         {/* RIGHT: fotos ordenadas -> tour */}
         <div className="hero-art" style={{ position: "relative", height: 520 }}>
-          <div data-px="0.05" className="hero-photos" style={{ position: "absolute", left: 0, right: 0, top: 18, zIndex: 14, display: "flex", justifyContent: "center", alignItems: "flex-start", gap: 14 }}>
+          <div data-px="0.05" className="hero-photos" style={{ position: "absolute", left: "50%", top: 92, transform: "translateX(-50%)", zIndex: 6, display: "flex", justifyContent: "center", alignItems: "flex-start" }}>
             {PHOTOS.map((p, i) => (
-              <div key={p.n} style={{ animation: `lumFloat ${FLOAT[i]} ease-in-out infinite`, animationDelay: DELAY[i], marginTop: p.mt }}>
+              <div key={p.n} style={{ animation: `lumFloat ${FLOAT[i]} ease-in-out infinite`, animationDelay: DELAY[i], marginTop: p.mt, marginLeft: i === 0 ? 0 : -30, zIndex: p.z }}>
                 <div className="hero-photo" style={{ position: "relative", width: 122, height: 92, borderRadius: 13, overflow: "hidden", transform: `rotate(${p.rot})`, boxShadow: "0 18px 38px -20px rgba(80,60,120,0.6)", border: "5px solid rgba(255,255,255,0.92)" }}>
                   <img src={p.src} alt={p.label} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
                   <span className="font-mono" style={{ position: "absolute", top: 6, left: 6, width: 20, height: 20, borderRadius: 6, background: "rgba(255,255,255,0.92)", color: "#9a83bf", fontSize: 10, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center" }}>{p.n}</span>
