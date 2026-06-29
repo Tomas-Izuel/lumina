@@ -3,6 +3,10 @@
 Servicio multi-tenant de generación asíncrona de virtual tours usando
 **Luma Ray 2** en Amazon Bedrock. Diseñado para Propital, Propirent y Orkezto.
 
+> Este repositorio es un monorepo. El backend del servicio vive en `lumina/`.
+> Las apps de cara al público (landing, web app) están en `landing/` y `web/`
+> como placeholders para la visión v2.
+
 ## Stack
 
 | Capa | Tecnología |
@@ -20,37 +24,43 @@ Servicio multi-tenant de generación asíncrona de virtual tours usando
 ## Estructura
 
 ```
-lumina/
-├── main.py          # Lambda handler — API (Mangum)
-├── worker.py        # Lambda handler — SQS worker
-├── poller.py        # Lambda handler — EventBridge Scheduler
-├── webhook.py       # Lambda handler — Webhook dispatcher
-├── src/
-│   ├── main.py                    # FastAPI app factory
-│   ├── config/settings.py         # Pydantic settings (env vars)
-│   ├── db/supabase_client.py      # Cliente Supabase (service role)
-│   ├── auth/middleware.py         # Auth: X-API-Key timing-safe
-│   ├── observability.py           # JSON logging + CloudWatch metrics
-│   ├── routers/
-│   │   ├── tours.py               # POST /tours, GET /tours/{id}, upload-urls
-│   │   ├── accounts.py            # POST /accounts, /credits
-│   │   ├── admin.py               # POST /admin/tenants, /webhooks, /quotas
-│   │   └── health.py              # GET /health
-│   ├── services/
-│   │   ├── tour_service.py        # Lógica de tours + SQS enqueue
-│   │   ├── credit_service.py      # Lógica de créditos (RPC Supabase)
-│   │   ├── video_backend.py       # Protocol VideoGenerationBackend + LumaRay2
-│   │   ├── s3_service.py          # Presigned URLs, HeadObject, upload/download
-│   │   └── webhook_service.py     # HMAC, enqueue, log delivery
-│   └── schemas/
-│       ├── tours.py               # Pydantic v2 request/response de tours
-│       ├── accounts.py            # Pydantic v2 de accounts/créditos
-│       └── admin.py               # Pydantic v2 de admin
-├── tests/                         # pytest + mocks (no infra real requerida)
-├── supabase/migrations/           # 7 migraciones SQL (supabase agent — BLOQUE A)
-├── docs/aws-infra-setup.md        # Comandos AWS CLI para crear recursos
-├── requirements.txt
-├── requirements-dev.txt
+(raíz del monorepo)/
+├── lumina/                        # backend serverless Python
+│   ├── main.py          # Lambda handler — API (Mangum)
+│   ├── worker.py        # Lambda handler — SQS worker
+│   ├── poller.py        # Lambda handler — EventBridge Scheduler
+│   ├── webhook.py       # Lambda handler — Webhook dispatcher
+│   ├── src/
+│   │   ├── main.py                    # FastAPI app factory
+│   │   ├── config/settings.py         # Pydantic settings (env vars)
+│   │   ├── db/supabase_client.py      # Cliente Supabase (service role)
+│   │   ├── auth/middleware.py         # Auth: X-API-Key timing-safe
+│   │   ├── observability.py           # JSON logging + CloudWatch metrics
+│   │   ├── routers/
+│   │   │   ├── tours.py               # POST /tours, GET /tours/{id}, upload-urls
+│   │   │   ├── accounts.py            # POST /accounts, /credits
+│   │   │   ├── admin.py               # POST /admin/tenants, /webhooks, /quotas
+│   │   │   └── health.py              # GET /health
+│   │   ├── services/
+│   │   │   ├── tour_service.py        # Lógica de tours + SQS enqueue
+│   │   │   ├── credit_service.py      # Lógica de créditos (RPC Supabase)
+│   │   │   ├── video_backend.py       # Protocol VideoGenerationBackend + LumaRay2
+│   │   │   ├── s3_service.py          # Presigned URLs, HeadObject, upload/download
+│   │   │   └── webhook_service.py     # HMAC, enqueue, log delivery
+│   │   └── schemas/
+│   │       ├── tours.py               # Pydantic v2 request/response de tours
+│   │       ├── accounts.py            # Pydantic v2 de accounts/créditos
+│   │       └── admin.py               # Pydantic v2 de admin
+│   ├── tests/                         # pytest + mocks (no infra real requerida)
+│   ├── supabase/migrations/           # 8 migraciones SQL
+│   ├── docs/aws-infra-setup.md        # Comandos AWS CLI para crear recursos
+│   ├── requirements.txt
+│   ├── requirements-dev.txt
+│   └── .env.example
+├── landing/                       # placeholder — sitio de marketing (v2)
+│   └── README.md
+├── web/                           # placeholder — web app SaaS (v2)
+│   └── README.md
 └── .github/workflows/cd_lumina.yml
 ```
 

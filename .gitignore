@@ -4,3 +4,15 @@ node_modules/
 *.zip
 __pycache__/
 .venv/
+
+# Python (backend — lumina/)
+lumina/__pycache__/
+lumina/.venv/
+lumina/*.zip
+lumina/package/
+
+# Frontend (landing/, web/)
+landing/node_modules/
+landing/.next/
+web/node_modules/
+web/.next/

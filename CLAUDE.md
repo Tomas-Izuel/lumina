@@ -70,25 +70,41 @@ Este pipeline está portado del monorepo Propital y **adaptado a Lumina**. Difer
 - **Infra/CI**: AWS (S3, SQS, EventBridge, IAM, CloudWatch), GitHub Actions (`.github/workflows/cd_lumina.yml`).
 
 ## Estructura del repo
+
+Este repositorio es un monorepo. El backend del servicio vive en `lumina/`.
+Las apps de cara al público (landing, web app) están en `landing/` y `web/`
+como placeholders para la visión v2.
+
 ```
-lumina/
-├── main.py / worker.py / poller.py / webhook.py   # 4 entry points Lambda (mismo ZIP, handlers distintos)
-├── src/
-│   ├── main.py                  # FastAPI app + routers
-│   ├── config/settings.py       # settings desde entorno (sin valores mágicos)
-│   ├── db/supabase_client.py
-│   ├── auth/middleware.py       # API key por tenant (bcrypt, timing-safe)
-│   ├── routers/                 # tours, accounts, admin, health
-│   ├── services/                # tour, credit, bedrock/video_backend, s3, ffmpeg, webhook
-│   └── schemas/                 # Pydantic v2
-├── supabase/migrations/*.sql    # migraciones versionadas (forward-only)
-├── tests/                       # pytest + mocks (sin recursos cloud reales)
-├── docs/aws-infra-setup.md      # recursos AWS a crear + deploy
+(raíz del monorepo)/
+├── lumina/                      # backend serverless Python
+│   ├── main.py / worker.py / poller.py / webhook.py   # 4 entry points Lambda (mismo ZIP, handlers distintos)
+│   ├── src/
+│   │   ├── main.py                  # FastAPI app + routers
+│   │   ├── config/settings.py       # settings desde entorno (sin valores mágicos)
+│   │   ├── db/supabase_client.py
+│   │   ├── auth/middleware.py       # API key por tenant (bcrypt, timing-safe)
+│   │   ├── routers/                 # tours, accounts, admin, health
+│   │   ├── services/                # tour, credit, bedrock/video_backend, s3, ffmpeg, webhook
+│   │   └── schemas/                 # Pydantic v2
+│   ├── supabase/migrations/*.sql    # migraciones versionadas (forward-only)
+│   ├── tests/                       # pytest + mocks (sin recursos cloud reales)
+│   ├── docs/aws-infra-setup.md      # recursos AWS a crear + deploy
+│   ├── requirements.txt
+│   ├── requirements-dev.txt
+│   └── .env.example
+├── landing/                     # placeholder — sitio de marketing (v2)
+│   └── README.md
+├── web/                         # placeholder — web app SaaS (v2)
+│   └── README.md
 ├── .github/workflows/cd_lumina.yml
-├── .claude/                     # pipeline (skill, agents, scripts, rules)
+├── .claude/                     # pipeline (gobierna todo el monorepo)
 ├── Propi-doc/                   # artefactos del pipeline por feature (gitignored)
-└── .env.example
+├── CLAUDE.md
+└── README.md
 ```
+
+Convención de layout: cada app vive en una carpeta hermana en la raíz (`lumina/`, `landing/`, `web/`). Sin gestor de workspaces por ahora — cada app es autónoma con sus propias dependencias.
 
 ## Reglas Operativas Clave
 - **No modificar/crear `.env`** sin confirmación. Usar `.env.example` como referencia; sin secrets en código ni en logs.
@@ -98,16 +114,25 @@ lumina/
 - **Multi-tenancy**: cada query/endpoint debe respetar el aislamiento por `tenant_id`; RLS es la segunda línea de defensa.
 - **Atomicidad crédito↔resultado**: nunca descontar crédito por un tour fallido ni entregar doble por un crédito. Usar las funciones SQL atómicas (`reserve_credit`, `confirm_credit_consumption`, `release_credit_reservation`) + claim atómico del poller (`generating→finalizing`).
 
+## Visión de producto: v1 (interno) → v2 (SaaS para terceros)
+- **v1 (actual)**: Lumina es **infraestructura interna** del grupo. Las apps consumidoras (Propital, Propirent, Orkezto) otorgan créditos a sus cuentas y consumen vía API. NO se cobra dinero; el billing es un **punto de extensión limpio**, no construido aún.
+- **v2 (roadmap)**: Lumina como **app/SaaS propia** vendida a inmobiliarias y proveedores externos, con **planes de suscripción** medidos en dos dimensiones:
+  - 🎬 **Generación**: videos por mes (ej. plan Starter = 2 videos/mes). Mapea a `tenant_quotas.max_tours_per_month`.
+  - 💾 **Almacenamiento**: cantidad de videos guardados disponibles (ej. Starter = 8 videos). Requiere un contador de almacenamiento por cuenta + lifecycle S3 por plan (nuevo en v2).
+  - La **descarga siempre está permitida** (entrega por link S3); se monetiza por *cuánto generás* y *cuánto retenés* → para más videos/almacenamiento, **upgrade de plan**.
+- **Lo que ya habilita v2 sin reescribir el core**: multi-tenancy + RLS, cuotas y trazabilidad de costo por tenant (desde v1), backend de modelo **pluggable** (calidad/costo por tier), y el billing como punto de extensión.
+- **Lo que v2 agrega** (no implementar sin pasar por el pipeline): tabla de planes/suscripciones + enforcement a nivel plan, contador de almacenamiento + retención por plan, integración de pago (Stripe/Fintoc), portal de autogestión y frontend propio. Detalle de presentación en `demo.md` § "Visión v2".
+
 ## Política de Migraciones SQL (DDL vs DML, forward-only)
-Las migraciones en `supabase/migrations/` corren contra Postgres y son **propiedad del desarrollo, atadas a un cambio de esquema o de código**.
+Las migraciones en `lumina/supabase/migrations/` corren contra Postgres y son **propiedad del desarrollo, atadas a un cambio de esquema o de código**.
 - **Forward-only**: NUNCA editar una migración ya entregada. Para cambiar algo, crear una migración nueva numerada (ej. la 008 agregó el estado `finalizing` y `CREATE OR REPLACE` de funciones, sin tocar la 007).
 - **SÍ van como migración**: DDL (`CREATE`/`ALTER` de tablas, índices, constraints, funciones, RLS) y data migrations atadas a un cambio de código (backfills, normalizaciones).
 - **NO van como migración**: toggles/ediciones puntuales de filas por decisión operativa sin código asociado (activar un tenant, asignar créditos a mano). Eso es trabajo de un control de backoffice/admin, no de una migración. Mientras no exista ese control, cualquier mutación manual en prod queda como registro auditable fuera de `migrations/`.
 
 ## Ejecución y Testing local
-- **Tests**: `python -m pytest` (mocks de AWS/Supabase/ffmpeg; no requiere recursos reales). Mantener la suite en verde antes de cerrar.
-- **API local** (opcional): `uvicorn src.main:app --reload --port 8080` con las env vars de `.env`.
-- **Deploy**: ver `docs/aws-infra-setup.md` (habilitar Luma Ray 2 en Bedrock Model Access + confirmar precio, crear proyecto Supabase + `supabase db push`, crear S3/SQS/EventBridge/IAM + layer ffmpeg, configurar secrets de GitHub Actions).
+- **Tests**: `cd lumina && python -m pytest` (mocks de AWS/Supabase/ffmpeg; no requiere recursos reales). Mantener la suite en verde antes de cerrar.
+- **API local** (opcional): `cd lumina && uvicorn src.main:app --reload --port 8080` con las env vars de `.env`.
+- **Deploy**: ver `lumina/docs/aws-infra-setup.md` (habilitar Luma Ray 2 en Bedrock Model Access + confirmar precio, crear proyecto Supabase + `supabase db push`, crear S3/SQS/EventBridge/IAM + layer ffmpeg, configurar secrets de GitHub Actions).
 
 ## Convenciones de Nombrado
 | Contexto | Convención | Ejemplo |
