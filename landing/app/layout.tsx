@@ -27,18 +27,20 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://lumina.propital.co
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Lumina — Tours virtuales con IA para real estate",
+    default: "Lumina — Kit de IA para real estate: estimación, video y 3D",
     template: "%s · Lumina",
   },
   description:
-    "Lumina convierte las fotos de una propiedad en un tour virtual en video, generado con IA. Profesional y listo para compartir — sin filmar, sin editar. Por API o desde la web.",
+    "Lumina es un kit de IA para real estate: estimá el valor de venta y arriendo de una propiedad, convertí fotos en un tour virtual en video y —pronto— recorré su modelo 3D. Por API o desde la web.",
   applicationName: "Lumina",
   keywords: [
+    "estimador de valor inmobiliario",
+    "tasación con IA",
     "tour virtual inmobiliario",
     "recorrido virtual",
     "video con IA",
+    "modelo 3D propiedad",
     "real estate IA",
-    "tours virtuales",
     "inmobiliaria",
     "Lumina",
     "Propital",
@@ -52,14 +54,14 @@ export const metadata: Metadata = {
     locale: "es_AR",
     url: SITE_URL,
     siteName: "Lumina",
-    title: "Lumina — Tours virtuales con IA para real estate",
+    title: "Lumina — Kit de IA para real estate",
     description:
-      "Fotos sueltas, un tour que vende. Tours virtuales en video generados con IA, en minutos.",
+      "Estimá valor de venta y arriendo, convertí fotos en un tour y —pronto— recorré el modelo 3D. El kit de IA que potencia cada operación.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Lumina — Tours virtuales con IA",
-    description: "Fotos sueltas, un tour que vende. Generados con IA, en minutos.",
+    title: "Lumina — Kit de IA para real estate",
+    description: "Estimación, tour en video y modelo 3D, potenciados por IA.",
   },
   robots: {
     index: true,
@@ -76,7 +78,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f1eef7",
+  themeColor: "#eeecf9",
   width: "device-width",
   initialScale: 1,
 };

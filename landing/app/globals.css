@@ -42,6 +42,8 @@ a { color: inherit; }
 @keyframes lumStroke { from{stroke-dashoffset:0;} to{stroke-dashoffset:-230;} }
 @keyframes lumBlink { 0%,50%{opacity:1;} 50.01%,100%{opacity:0;} }
 @keyframes lumFadeIn { to{opacity:1;} }
+/* beam flow: pulso que recorre la curva (pathLength normalizado a 1) */
+@keyframes lumDashFlow { from { stroke-dashoffset: 1.2; } to { stroke-dashoffset: 0; } }
 
 /* ---------- Reveal on scroll ---------- */
 [data-reveal] {
@@ -68,40 +70,25 @@ a { color: inherit; }
 @media (max-width: 960px) {
   /* nav */
   .nav-links { display: none !important; }
-  /* hero a una columna; el arte va arriba */
-  .hero-grid { grid-template-columns: 1fr !important; gap: 8px !important; }
+  /* el glow/grid del hero cubre la versión apilada (más alta) */
+  .hero-bg { height: 1080px !important; }
+  /* hero a una columna; texto primero, casa 3D debajo */
+  .hero-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
   .hero-grid > * { min-width: 0 !important; }
-  .hero-art { height: 360px !important; order: -1; margin-bottom: 8px; }
-  /* bento: 2 columnas */
-  .bento { grid-template-columns: repeat(2, 1fr) !important; }
-  .bento > * { grid-column: span 2 !important; }
+  .hero-stage { height: 420px !important; }
+  /* productos: estimador y cards a una columna */
+  .est-grid { grid-template-columns: 1fr !important; }
+  .prod-grid { grid-template-columns: 1fr !important; }
+  .prod-card { grid-template-columns: 1fr !important; gap: 18px !important; }
   /* paneles usar / sobre a una columna */
   .panel-grid { grid-template-columns: 1fr !important; gap: 26px !important; }
   .sobre-grid { grid-template-columns: 1fr !important; gap: 28px !important; padding: 34px !important; }
-  /* flujo: stage más bajo */
-  .beam-stage { height: 360px !important; }
 }
 
 @media (max-width: 640px) {
   .hero-h1 { font-size: 44px !important; }
-  .sec-h2 { font-size: 38px !important; }
-  /* bento a una columna */
-  .bento { grid-template-columns: 1fr !important; gap: 14px !important; }
-  /* hero arte: escala las piezas para que entren */
-  .hero-art { height: 400px !important; }
-  .hero-photos { gap: 8px !important; }
-  .hero-photo { width: 92px !important; height: 70px !important; }
-  .hero-tourframe { width: 280px !important; margin-left: -140px !important; top: 196px !important; }
-  .hero-iapill { left: 0 !important; top: 124px !important; }
-  /* stats con wrap */
-  .hero-stats { flex-wrap: wrap !important; gap: 18px !important; }
-  /* el bento "resultado" (D) apila imagen + texto */
-  .bento-d-inner { grid-template-columns: 1fr !important; gap: 16px !important; }
-  /* flujo: nodos y hub más chicos, stage más bajo */
-  .beam-stage { height: 300px !important; }
-  .beam-node { width: 46px !important; height: 46px !important; }
-  .beam-hub { width: 92px !important; height: 92px !important; }
-  .beam-hub-core { width: 74px !important; height: 74px !important; }
+  .sec-h2 { font-size: 36px !important; }
+  .hero-stage { height: 360px !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {
