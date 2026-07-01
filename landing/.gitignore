@@ -1,6 +1,10 @@
 # dependencies
 /node_modules
 
+# el gestor de esta app es npm (package-lock.json); ignorar artefactos de pnpm
+pnpm-lock.yaml
+pnpm-workspace.yaml
+
 # next.js
 /.next/
 /out/

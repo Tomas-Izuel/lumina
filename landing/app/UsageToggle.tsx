@@ -51,11 +51,11 @@ function WebPanel() {
       <div>
         <div style={{ display: "inline-flex", padding: "8px 13px", borderRadius: 10, background: "rgba(210,192,232,0.18)", color: "#7a5ca8", fontSize: 13, fontWeight: 600, marginBottom: 18 }}>Web de Lumina · sin código</div>
         <h3 className="font-serif" style={h3}>Para tu equipo de ventas</h3>
-        <p style={lead}>Subí, ordená y generá tours desde el navegador. Sin instalar nada, sin tocar código. Cualquiera en la inmobiliaria publica un tour en minutos.</p>
+        <p style={lead}>Estimá valores, generá tours y gestioná tus propiedades desde el navegador. Sin instalar nada. Cualquiera en la inmobiliaria lo usa en minutos.</p>
         <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 26 }}>
-          <Check color="#9a83bf" bg="rgba(154,131,191,0.14)">Carga por arrastrar y soltar</Check>
-          <Check color="#9a83bf" bg="rgba(154,131,191,0.14)">Reordená el recorrido visualmente</Check>
-          <Check color="#9a83bf" bg="rgba(154,131,191,0.14)">Descargá o publicá directo a portales</Check>
+          <Check color="#9a83bf" bg="rgba(154,131,191,0.14)">Estimación de valor con solo la dirección</Check>
+          <Check color="#9a83bf" bg="rgba(154,131,191,0.14)">Tours de video por arrastrar y soltar</Check>
+          <Check color="#9a83bf" bg="rgba(154,131,191,0.14)">Publicá directo a portales y redes</Check>
         </div>
         <a href="#wl" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "13px 22px", borderRadius: 12, background: "linear-gradient(135deg,#8f78b8,#b29fd2)", color: "#fff", fontSize: 15, fontWeight: 600, textDecoration: "none", boxShadow: "0 14px 30px -12px rgba(170,152,202,0.85)" }}>
           Probar la web <span style={{ fontSize: 17 }}>→</span>
@@ -67,12 +67,22 @@ function WebPanel() {
           <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#efdde5" }} />
           <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#d9cbe8" }} />
           <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#c9d6f0" }} />
-          <span style={{ margin: "0 auto", fontSize: 12, color: "#9a90ad", background: "#fff", borderRadius: 7, padding: "4px 14px", border: "1px solid rgba(120,90,160,0.1)" }}>app.lumina.ai/nuevo-tour</span>
+          <span style={{ margin: "0 auto", fontSize: 12, color: "#9a90ad", background: "#fff", borderRadius: 7, padding: "4px 14px", border: "1px solid rgba(120,90,160,0.1)" }}>app.lumina.ai/propiedad</span>
         </div>
         <div style={{ padding: 22 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
-            <span style={{ fontSize: 14, fontWeight: 600, color: "#3d3650" }}>Depto 3 amb · Palermo</span>
-            <span style={{ fontSize: 12, color: "#8a8299" }}>6 fotos</span>
+            <span style={{ fontSize: 14, fontWeight: 600, color: "#3d3650" }}>Depto 3 amb · Providencia</span>
+            <span style={{ fontSize: 12, color: "#5fb88a", fontWeight: 600, background: "rgba(95,184,138,0.13)", borderRadius: 6, padding: "3px 9px" }}>Estimado ✓</span>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 9, marginBottom: 16 }}>
+            <div style={{ borderRadius: 11, padding: 12, background: "rgba(154,131,191,0.1)" }}>
+              <div style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.03em", color: "#8b7cae", marginBottom: 5 }}>Venta</div>
+              <div className="font-serif" style={{ fontSize: 21, color: "#241f30", lineHeight: 1 }}>$ 265M</div>
+            </div>
+            <div style={{ borderRadius: 11, padding: 12, background: "rgba(159,182,230,0.13)" }}>
+              <div style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.03em", color: "#7684b0", marginBottom: 5 }}>Arriendo</div>
+              <div className="font-serif" style={{ fontSize: 21, color: "#241f30", lineHeight: 1 }}>$ 820K/mes</div>
+            </div>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 9, marginBottom: 18 }}>
             {["/room-living.jpg", "/room-cocina.jpg", "/room-dormitorio.jpg"].map((src) => (
@@ -98,9 +108,9 @@ function ApiPanel() {
       <div>
         <div className="font-mono" style={{ display: "inline-flex", padding: "8px 13px", borderRadius: 10, background: "rgba(192,202,234,0.28)", color: "#7684b0", fontSize: 13, fontWeight: 600, marginBottom: 18 }}>API REST · developers</div>
         <h3 className="font-serif" style={h3}>Integralo en tu CRM o portal</h3>
-        <p style={lead}>Un POST con las imágenes ordenadas, un webhook con el video listo. Generá tours a escala desde tu propio sistema, sin intervención manual.</p>
+        <p style={lead}>Pedí una estimación con una dirección, o un tour con imágenes ordenadas — y recibí la respuesta por webhook. Automatizá a escala desde tu propio sistema.</p>
         <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 26 }}>
-          <Check color="#7684b0" bg="rgba(118,132,176,0.16)">Autenticación por API key</Check>
+          <Check color="#7684b0" bg="rgba(118,132,176,0.16)">Endpoints de estimación y de tours</Check>
           <Check color="#7684b0" bg="rgba(118,132,176,0.16)">Webhooks de estado en tiempo real</Check>
           <Check color="#7684b0" bg="rgba(118,132,176,0.16)">SDKs para Node y Python</Check>
         </div>
@@ -111,24 +121,24 @@ function ApiPanel() {
         <div className="font-mono" style={{ borderRadius: 14, overflow: "hidden", background: "#221d2e", fontSize: 12.5, lineHeight: 1.7, boxShadow: "0 24px 50px -28px rgba(36,31,48,0.7)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "11px 16px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
             <span style={{ padding: "2px 8px", borderRadius: 6, background: "#5fb88a", color: "#0e2a1c", fontSize: 11, fontWeight: 600 }}>POST</span>
-            <span style={{ color: "#c9bce0" }}>/v1/tours</span>
+            <span style={{ color: "#c9bce0" }}>/v1/estimates</span>
             <span style={{ marginLeft: "auto", color: "#6f6685", fontSize: 11 }}>curl</span>
           </div>
           <div style={{ padding: "15px 18px", color: "#cfc6dd" }}>
             <span style={{ color: "#8d83a3" }}>{"{"}</span><br />
-            &nbsp;&nbsp;<span style={{ color: "#cabbe9" }}>&quot;property_id&quot;</span>: <span style={{ color: "#9ad0b0" }}>&quot;AR-1042&quot;</span>,<br />
-            &nbsp;&nbsp;<span style={{ color: "#cabbe9" }}>&quot;images&quot;</span>: [<span style={{ color: "#9ad0b0" }}>&quot;living_01.jpg&quot;</span>, <span style={{ color: "#9ad0b0" }}>&quot;cocina_02.jpg&quot;</span>, …],<br />
-            &nbsp;&nbsp;<span style={{ color: "#cabbe9" }}>&quot;style&quot;</span>: <span style={{ color: "#9ad0b0" }}>&quot;cinematic&quot;</span><br />
+            &nbsp;&nbsp;<span style={{ color: "#cabbe9" }}>&quot;address&quot;</span>: <span style={{ color: "#9ad0b0" }}>&quot;Av. Providencia 2140&quot;</span>,<br />
+            &nbsp;&nbsp;<span style={{ color: "#cabbe9" }}>&quot;area_m2&quot;</span>: <span style={{ color: "#e6b98a" }}>92</span>,<br />
+            &nbsp;&nbsp;<span style={{ color: "#cabbe9" }}>&quot;bedrooms&quot;</span>: <span style={{ color: "#e6b98a" }}>3</span><br />
             <span style={{ color: "#8d83a3" }}>{"}"}</span><br />
-            <span style={{ color: "#5f586f" }}>→ 202 {"{"} tour_id: &quot;t_8f2a&quot;, status: &quot;rendering&quot; {"}"}</span>
+            <span style={{ color: "#5f586f" }}>→ 200 {"{"} sale: 265000000, rent: 820000, currency: &quot;CLP&quot;, confidence: 0.72 {"}"}</span>
           </div>
         </div>
         <div style={{ position: "relative", marginTop: 16, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px 16px", borderRadius: 14, background: "#fbf8fd", border: "1px solid rgba(120,90,160,0.12)", overflow: "hidden" }}>
           <div style={{ position: "absolute", left: 16, right: 16, top: "50%", height: 2, background: "linear-gradient(90deg,transparent,rgba(154,131,191,0.3),transparent)" }} />
           <div style={{ position: "absolute", top: "50%", transform: "translateY(-50%)", width: 9, height: 9, borderRadius: "50%", background: "#9a83bf", boxShadow: "0 0 10px rgba(154,131,191,0.8)", animation: "lumPacket 3.4s ease-in-out infinite" }} />
           <Step label="request"><span style={{ width: 15, height: 15, borderRadius: 4, background: "#9a83bf" }} /></Step>
-          <Step label="render"><span style={{ width: 15, height: 15, border: "2px solid #9a83bf", borderTopColor: "transparent", borderRadius: "50%", animation: "lumSpin 1.2s linear infinite" }} /></Step>
-          <Step label="webhook · video"><span style={{ width: 15, height: 15, borderRadius: 4, background: "#5fb88a" }} /></Step>
+          <Step label="IA"><span style={{ width: 15, height: 15, border: "2px solid #9a83bf", borderTopColor: "transparent", borderRadius: "50%", animation: "lumSpin 1.2s linear infinite" }} /></Step>
+          <Step label="valor + rango"><span style={{ width: 15, height: 15, borderRadius: 4, background: "#5fb88a" }} /></Step>
         </div>
       </div>
     </div>

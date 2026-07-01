@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "Lumina — Tours virtuales con IA para real estate";
+export const alt = "Lumina — Kit de IA para real estate: estimación, video y 3D";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -26,11 +26,11 @@ export default function OgImage() {
           Lumina
         </div>
         <div style={{ display: "flex", flexWrap: "wrap", marginTop: 44, fontSize: 84, letterSpacing: "-0.02em", lineHeight: 1.05, maxWidth: 940 }}>
-          <span>Fotos sueltas, un&nbsp;</span>
-          <span style={{ color: "#9a83bf", fontStyle: "italic" }}>tour que vende.</span>
+          <span>Conocé la propiedad antes de&nbsp;</span>
+          <span style={{ color: "#9a83bf", fontStyle: "italic" }}>mostrarla.</span>
         </div>
-        <div style={{ marginTop: 28, fontSize: 34, color: "#5a5369", maxWidth: 820, fontFamily: "sans-serif" }}>
-          Tours virtuales en video, generados con IA. Sin filmar, sin editar.
+        <div style={{ marginTop: 28, fontSize: 34, color: "#5a5369", maxWidth: 860, fontFamily: "sans-serif" }}>
+          Kit de IA para real estate: estimación de valor, tour en video y modelo 3D.
         </div>
       </div>
     ),
